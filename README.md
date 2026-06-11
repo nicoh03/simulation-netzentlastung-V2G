@@ -92,19 +92,19 @@ $`SoC_{t, \text{solar}} = \min(SoC_{\max}, SoC_{t, \text{solar}})`$
 #### Schritt 2: Redispatch-Energiestrom-Absorption
 Das mathematische Potenzial zur Rettung abzuregelnder Energie ($P_{\text{saved}, t}$) wird durch drei physikalische Barrieren limitiert: das Angebot der Abregelung, die maximale Ladeleistung der Netzanbindungen und die freie energetische Restkapazität der Batterien. In Übereinstimmung mit Modellen zur ungesteuerten Lastspitzen- und Koinzidenzermittlung (Blumberg et al., 2022) wird die maximal abrufbare Ladeleistung pro Zeitschritt zeitabhängig durch die Anzahl real angeschlossener Fahrzeuge begrenzt:
 
-$$P_{\text{charge\_max}, t} = \frac{N_{\text{active}} \cdot 11.0 \text{ kW} \cdot P_{\text{avail}, t}}{1000} \quad [\text{MWh}]$$
-$$E_{\text{free}, t} = E_{\text{fleet}} \cdot (SoC_{\max} - SoC_{t, \text{solar}}) \quad [\text{MWh}]$$
-$$E_{\text{saved}, t} = \min\left(\text{Abregelung}_{t}, \, P_{\text{charge\_max}, t} \cdot \Delta t, \, E_{\text{free}, t}\right)$$
+$`P_{\text{charge\_max}, t} = \frac{N_{\text{active}} \cdot 11.0 \text{ kW} \cdot P_{\text{avail}, t}}{1000} \quad [\text{MWh}]`$
+$`E_{\text{free}, t} = E_{\text{fleet}} \cdot (SoC_{\max} - SoC_{t, \text{solar}}) \quad [\text{MWh}]`$
+$`E_{\text{saved}, t} = \min\left(\text{Abregelung}_{t}, \, P_{\text{charge\_max}, t} \cdot \Delta t, \, E_{\text{free}, t}\right)`$
 
 #### Schritt 3: Flotten-Entladungsbilanz (Fahrprofil & V2G)
 Die energetische Entnahme setzt sich zusammen aus dem Fahrverbrauch ($E_{\text{drive}, t}$) und der bewussten Rückspeisung ins Netz zur Residuallastdeckung ($E_{\text{v2g}, t}$):
-$$E_{\text{drive}, t} = \begin{cases} \frac{N_{\text{active}} \cdot 1.5 \text{ kW} \cdot \Delta t}{1000} & \text{für } t_{\text{hour}} \in \{7, 8, 16, 17\} \\ 0 & \text{sonst} \end{cases}$$
-$$E_{\text{v2g}, t} = \begin{cases} \frac{N_{\text{active}} \cdot 4.0 \text{ kW} \cdot P_{\text{avail}, t} \cdot \Delta t}{1000} & \text{für } 18 \le t_{\text{hour}} \le 23 \\ 0 & \text{sonst} \end{cases}$$
-$$\text{Total\_Discharge}_t = E_{\text{drive}, t} + E_{\text{v2g}, t}$$
+$`E_{\text{drive}, t} = \begin{cases} \frac{N_{\text{active}} \cdot 1.5 \text{ kW} \cdot \Delta t}{1000} & \text{für } t_{\text{hour}} \in \{7, 8, 16, 17\} \\ 0 & \text{sonst} \end{cases}`$
+$`E_{\text{v2g}, t} = \begin{cases} \frac{N_{\text{active}} \cdot 4.0 \text{ kW} \cdot P_{\text{avail}, t} \cdot \Delta t}{1000} & \text{für } 18 \le t_{\text{hour}} \le 23 \\ 0 & \text{sonst} \end{cases}`$
+$`\text{Total\_Discharge}_t = E_{\text{drive}, t} + E_{\text{v2g}, t}`$
 
 #### Schritt 4: Endgültiges SoC-Update per Sättigungsfunktion
 Der finale Ladestand für den nächsten Zeitschritt wird berechnet und mittels einer Sättigungsfunktion (`np.clip`) innerhalb der physikalischen und Sicherheitsgrenzen gehalten:
-$$SoC_t = \text{clip}\left(\frac{(SoC_{t, \text{solar}} \cdot E_{\text{fleet}}) + E_{\text{saved}, t} - \text{Total\_Discharge}_t}{E_{\text{fleet}}}, \, SoC_{\min}, \, SoC_{\max}\right)$$
+$`SoC_t = \text{clip}\left(\frac{(SoC_{t, \text{solar}} \cdot E_{\text{fleet}}) + E_{\text{saved}, t} - \text{Total\_Discharge}_t}{E_{\text{fleet}}}, \, SoC_{\min}, \, SoC_{\max}\right)`$
 
 #### Analyse der Musterwochen (Kompensationsverlauf)
 Hier werden beispielhaft die Verläufe für die verschiedenen Jahreszeiten visualisiert:
