@@ -247,7 +247,7 @@ for m in monate_config:
 
     ax.set_xticks(woche_ticks)
     ax.set_xticklabels(labels_de, rotation=15, ha='right')
-    ax.legend(loc="upper right", frameon=True, facecolor="white", edgecolor="none", fontsize=11)
+    ax.legend(loc="upper left", frameon=True, facecolor="white", edgecolor="none", fontsize=11)
     plt.tight_layout()
 
     # ÄNDERUNG: Speichert das Bild dynamisch mit dem Monatsnamen im Dateinamen
