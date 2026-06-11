@@ -71,9 +71,9 @@ Das Simulationsskript `sim.py` implementiert ein **zeitdiskretes, deterministisc
 ### 3.1 Definition der Zustandsvariablen
 
 Für jeden Zeitschritt $t \in [1, 8760]$ ist der Systemzustand definiert durch:
-* $E_{\text{fleet}} = N \cdot \mathit{acceptance\_rate} \cdot 60.0 \text{ kWh} / 1000 \quad [\text{MWh}]$ (Gesamtkapazität der aktiven Flotte)
-* $SoC_t \in [SoC_{\min}, SoC_{\max}] \quad [-]$ (Relativer Ladestand der Flotte im Schritt $t$)
-* $P_{\text{avail}, t} = \mathit{avail\_factor}_t \quad [-]$ (Prozentuale Netzanbindung der Flotte)
+* $`E_{\text{fleet}} = N \cdot \mathit{acceptance\_rate} \cdot 60.0 \text{ kWh} / 1000 \quad [\text{MWh}]`$ (Gesamtkapazität der aktiven Flotte)
+* $`SoC_t \in [SoC_{\min}, SoC_{\max}] \quad [-]`$ (Relativer Ladestand der Flotte im Schritt $t$)
+* $`P_{\text{avail}, t} = \mathit{avail\_factor}_t \quad [-]`$ (Prozentuale Netzanbindung der Flotte)
 
 ### 3.2 Schritt-für-Schritt Berechnungslogik
 
@@ -81,13 +81,13 @@ Die mathematische Abbildung der Lade- und Netzentnahmebilanzen orientiert sich m
 
 #### Schritt 1: Uncontrolled / Smart Solar Charging
 Vor der Interaktion mit dem Redispatch-Signal nimmt die Flotte Energie über photovoltaische Erzeugung auf. Die Intensität korreliert mit der normierten deutschlandweiten PV-Erzeugung:
-$$SoC_{t, \text{solar}} = SoC_{t-1} + \frac{N_{\text{active}} \cdot P_{\text{solar\_charge}} \cdot P_{\text{avail}, t} \cdot \gamma_{\text{solar}, t} \cdot \Delta t}{E_{\text{fleet}}}$$
+$`SoC_{t, \text{solar}} = SoC_{t-1} + \frac{N_{\text{active}} \cdot P_{\text{solar\_charge}} \cdot P_{\text{avail}, t} \cdot \gamma_{\text{solar}, t} \cdot \Delta t}{E_{\text{fleet}}}`$
 *Wobei:*
-* $P_{\text{solar\_charge}} = 2.0 \text{ kW}$ (Mittlere solarinduzierte Ladeleistung pro Fahrzeug)
-* $\gamma_{\text{solar}, t} = \frac{\text{PV\_Erzeugung}_t}{\max(\text{PV\_Erzeugung})} \in [0, 1]$ (Relative Solar-Intensität)
+* $`P_{\text{solar\_charge}} = 2.0 \text{ kW}`$ (Mittlere solarinduzierte Ladeleistung pro Fahrzeug)
+* $`\gamma_{\text{solar}, t} = \frac{\text{PV\_Erzeugung}_t}{\max(\text{PV\_Erzeugung})} \in [0, 1]`$ (Relative Solar-Intensität)
 
 Der resultierende Zustand wird hart nach oben begrenzt:
-$$SoC_{t, \text{solar}} = \min(SoC_{\max}, SoC_{t, \text{solar}})$$
+$`SoC_{t, \text{solar}} = \min(SoC_{\max}, SoC_{t, \text{solar}})`$
 
 #### Schritt 2: Redispatch-Energiestrom-Absorption
 Das mathematische Potenzial zur Rettung abzuregelnder Energie ($P_{\text{saved}, t}$) wird durch drei physikalische Barrieren limitiert: das Angebot der Abregelung, die maximale Ladeleistung der Netzanbindungen und die freie energetische Restkapazität der Batterien. In Übereinstimmung mit Modellen zur ungesteuerten Lastspitzen- und Koinzidenzermittlung (Blumberg et al., 2022) wird die maximal abrufbare Ladeleistung pro Zeitschritt zeitabhängig durch die Anzahl real angeschlossener Fahrzeuge begrenzt:
